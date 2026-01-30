@@ -9,7 +9,7 @@ class Game:
     def play_turn(self):
         is_valid = False
         while not is_valid:
-            pos = self.players[self.play].chose_position()
+            pos = self.players[self.play].choose_position()
             if self.board.place_mark(pos, self.players[self.play].mark):
                 is_valid = True
         self.play = 0 if self.play else 1
