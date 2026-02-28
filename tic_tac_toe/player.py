@@ -45,7 +45,7 @@ class MediumBotStrategy(BotStrategy):
 
         for pos in empty:
             board.place_mark(pos, mark)
-            if rules.has_winner(board):
+            if rules.get_winner(board):
                 board.remove_mark(pos)
                 return pos
             board.remove_mark(pos)
@@ -54,28 +54,96 @@ class MediumBotStrategy(BotStrategy):
 
         for pos in empty:
             board.place_mark(pos, opponent)
-            if rules.has_winner(board):
+            if rules.get_winner(board):
                 board.remove_mark(pos)
                 return pos
             board.remove_mark(pos)
 
         return random.choice(empty)
+    
+class HardBotStrategy(BotStrategy):
+    def minimax(self, board, is_maximizing, rules):
+        if rules.get_winner(board) == 'X':
+            return 1
+        elif rules.get_winner(board) == 'O':
+            return -1
+        elif rules.is_draw(board):
+            return 0
+        
+        empty = board.get_empty_positions()
+        if is_maximizing:
+            best_score = -float("inf")
+            for pos in empty:
+                board.place_mark(pos, 'X')
+                score = self.minimax(board, not is_maximizing, rules)
+                board.remove_mark(pos)
+                best_score = max(score, best_score)
+
+            return best_score
+
+        else:
+            best_score = float("inf")
+            for pos in empty:
+                board.place_mark(pos, 'O')
+                score = self.minimax(board, not is_maximizing, rules)
+                board.remove_mark(pos)
+                best_score = min(score, best_score)
+
+            return best_score
+
+    def choose_move(self, board, mark, rules):
+        best_move = -1
+
+        if mark == 'X':
+            best_score = -float("inf")
+            for pos in board.get_empty_positions():
+                board.place_mark(pos, 'X')
+                score = self.minimax(board, False, rules)
+                print(pos, score)
+                board.remove_mark(pos)
+
+                if score > best_score:
+                    best_score = score
+                    best_move = pos
+
+        else:
+            best_score = float("inf")
+            for pos in board.get_empty_positions():
+                board.place_mark(pos, 'O')
+                score = self.minimax(board, True, rules)
+                print(pos, score)
+                board.remove_mark(pos)
+
+                if score < best_score:
+                    best_score = score
+                    best_move = pos
+
+        return best_move
+
+    
 
 class FactoryPlayers:
     def __init__(self):
         pass
 
-    def create_players(self, count, names, bot_type):
+    def create_players(self, count, names, bot_type, mark_type):
         if count == 2:
             p1 = HumanPlayer('X', names[0])
             p2 = HumanPlayer('O', names[1])
         else:
             if bot_type == 2:
                 bot = MediumBotStrategy()
+            elif bot_type == 3:
+                bot = HardBotStrategy()
             else:
                 bot = EasyBotStrategy()
-            p1 = HumanPlayer('X', names[0])
-            p2 = BotPlayer('O', 'Player 2', bot)
+
+            if mark_type == 1:
+                p1 = HumanPlayer('X', names[0])
+                p2 = BotPlayer('O', 'Player 2', bot)
+            else:
+                p2 = HumanPlayer('O', names[0])
+                p1 = BotPlayer('X', 'Player 2', bot)
             
         return (p1,p2)
 

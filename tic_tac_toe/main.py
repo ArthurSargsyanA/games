@@ -19,8 +19,9 @@ def main():
             count = menu.choose_player_count()
             if count != 2:
                 bot_type = menu.choose_difficulty()
+                mark_type = menu.choose_mark()
             names = menu.choose_player_names(count)
-            players = factory_players.create_players(count, names, bot_type)
+            players = factory_players.create_players(count, names, bot_type, mark_type)
             
         board = Board()
         game = Game(board, players, drawer, rules)

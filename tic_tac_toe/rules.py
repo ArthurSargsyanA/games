@@ -17,22 +17,24 @@ class Rules:
             for col in range(size)
         ]
 
-    def has_winner(self, board):
+    def get_winner(self, board):
         for val in board.box:
             if self._is_winning_line(val):
-                return True
+                return val[0]
             
         for val in self._get_all_cols(board):
             if self._is_winning_line(val):
-                return True
+                return val[0]
             
-        if self._is_winning_line(self._get_left_diagonal(board)):
-            return True
+        left_diagonal = self._get_left_diagonal(board)
+        if self._is_winning_line(left_diagonal):
+            return left_diagonal[0]
         
-        if self._is_winning_line(self._get_right_diagonal(board)):
-            return True
+        right_diagonal = self._get_right_diagonal(board)
+        if self._is_winning_line(right_diagonal):
+            return right_diagonal[0]
         
-        return False
+        return None
     
     def is_draw(self, board):
         for val in board.box:
