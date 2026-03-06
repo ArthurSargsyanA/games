@@ -10,6 +10,7 @@ class Player(ABC):
     def choose_position(self, board, rules):
         pass
 
+
 class HumanPlayer(Player):
      def choose_position(self, board, rules):
         while True:
@@ -21,6 +22,7 @@ class HumanPlayer(Player):
                 continue
             return pos
      
+
 class BotPlayer(Player):
      def __init__(self, mark, name, strategy):
         super().__init__(mark, name)
@@ -28,16 +30,19 @@ class BotPlayer(Player):
 
      def choose_position(self, board, rules):
         return self.strategy.choose_move(board, self.mark, rules)
-          
+
+
 class BotStrategy(ABC):
     @abstractmethod
     def choose_move(self, board, mark, rules):
         pass
 
+
 class EasyBotStrategy(BotStrategy):
     def choose_move(self, board, mark, rules):
-        pos = random.randint(1, 9)
-        return pos
+        empty = board.get_empty_positions()
+        return random.choice(empty)
+
 
 class MediumBotStrategy(BotStrategy):
     def choose_move(self, board, mark, rules):
@@ -61,6 +66,7 @@ class MediumBotStrategy(BotStrategy):
 
         return random.choice(empty)
     
+
 class HardBotStrategy(BotStrategy):
     def minimax(self, board, is_maximizing, rules):
         if rules.get_winner(board) == 'X':
@@ -120,7 +126,6 @@ class HardBotStrategy(BotStrategy):
 
         return best_move
 
-    
 
 class FactoryPlayers:
     def __init__(self):
@@ -146,4 +151,3 @@ class FactoryPlayers:
                 p1 = BotPlayer('X', 'Player 2', bot)
             
         return (p1,p2)
-
